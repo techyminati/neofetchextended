@@ -999,6 +999,13 @@ get_distro() {
                     *) distro="OS Elbrus $(< /etc/mcst_version)"
                 esac
 
+            elif [[ -f /etc/dgx-release ]]; then
+                distro="$(. /etc/dgx-release && echo "${DGX_NAME:-DGX OS} ${DGX_VERSION:-}")"
+                distro=$(trim "$distro")
+                case $distro_shorthand in
+                    on|tiny) distro="${distro%% *} ${distro#* }" ;;
+                esac
+
             elif type -p pveversion >/dev/null; then
                 case $distro_shorthand in
                     on|tiny) distro="Proxmox VE" ;;
@@ -1123,6 +1130,11 @@ get_distro() {
 
             distro=$(trim_quotes "$distro")
             distro=${distro/NAME=}
+
+            # Detect DGX OS (Ubuntu-based).
+            if [[ -f /etc/dgx-release && $distro == "Ubuntu"* ]]; then
+                distro="DGX OS ${distro#Ubuntu }"
+            fi
 
             # Get Ubuntu flavor.
             if [[ $distro == "Ubuntu"* ]]; then
@@ -7089,6 +7101,29 @@ ${c1}             ............
       ,dkkkkkkkkkkkkko;.    .;o;
         .;okkkkkdl;.    .,cl:.
             .,:cccccccc:,.
+EOF
+        ;;
+
+        "DGX"* | "dgx"*)
+            set_colors 2 7
+            read -rd '' ascii_data <<'EOF'
+${c1}                      -----------------------:
+                   :=-     ------------------:
+              :---:   -----.    -------------:
+           ---:    .--    :---.   .----------:
+        .---:   ---:  --     :--:   .--------:
+         ---.  ---    ----  ---:   :---------:
+          ---:  ---   -------.   -----  -----:
+           :---   --------    -----       .--:
+             :---     :::-------       ------:
+                ------...         -----------:
+                      -:---------------------:
+                      -----------------------:
+${c2}     @@@@@@@%. @%%   -@@  %%  @@@@@@@=  @@%    *%%@+
+     @@-   #%%.-%%.  %%+  @@  @@#   %%# @@%   :%%.%%-
+     @@-   :%%: *%% #@@   @@  @@#   *%% @@%  .%@  -%%.
+     @@-   :@@:  @@:%%.   @@  @@*  #%%# @@% .%%%%@@%%%
+     %%-   :@@:  =%%%+    %%  %%%%%%#   @@% %%*     %%#
 EOF
         ;;
 
