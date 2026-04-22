@@ -1206,9 +1206,44 @@ get_distro() {
         ;;
 
         Windows)
-            distro=$(wmic os get Caption)
-            distro=${distro/Caption}
+            # Try PowerShell first (available on modern Windows).
+            if type -P powershell.exe >/dev/null 2>&1; then
+                distro=$(powershell.exe -NoProfile -Command \
+                    '(Get-CimInstance Win32_OperatingSystem).Caption' 2>/dev/null)
+                # Convert encoding (PowerShell outputs in system locale,
+                # e.g. GBK on Chinese Windows). Use iconv if available.
+                if type -P iconv >/dev/null 2>&1; then
+                    converted=$(echo "$distro" | iconv -f GBK -t UTF-8 2>/dev/null)
+                    [[ -n "$converted" ]] && distro="$converted"
+                fi
+                # Strip leading/trailing whitespace and CRLF.
+                distro="${distro#"${distro%%[![:space:]]*}"}"
+                distro="${distro%"${distro##*[![:space:]]}"}"
+                distro="${distro%$'\r'}"
+            fi
+
+            # Fall back to wmic.
+            if [[ -z "$distro" ]] && type -P wmic.exe >/dev/null 2>&1; then
+                distro=$(wmic.exe os get Caption 2>/dev/null)
+                distro=${distro/Caption}
+                distro="${distro#"${distro%%[![:space:]]*}"}"
+                distro="${distro%"${distro##*[![:space:]]}"}"
+                distro="${distro%$'\r'}"
+            fi
+
+            # Strip leading "Microsoft " prefix.
             distro=${distro/Microsoft }
+
+            # Last resort: detect version from kernel name.
+            if [[ -z "$distro" ]]; then
+                case $kernel_name in
+                    *" 11"*)  distro="Windows 11" ;;
+                    *" 10"*)  distro="Windows 10" ;;
+                    *" 8"*)   distro="Windows 8" ;;
+                    *" 7"*)   distro="Windows 7" ;;
+                    *)        distro="Windows" ;;
+                esac
+            fi
         ;;
 
         Solaris)
@@ -11288,51 +11323,32 @@ EOF
         ;;
 
         *"[Windows 11]"*|*"on Windows 11"*|\
-        "Windows 11"* |"windows11")
-            set_colors 6 7
-            read -rd '' ascii_data <<'EOF'
-${c1}
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-################  ################
-EOF
-        ;;
-
+        "Windows 11"* |"windows11"|\
         *"[Windows 10]"*|*"on Windows 10"*|"Windows 8"*|\
         "Windows 10"* |"windows10"|"windows8")
-            set_colors 6 7
+            set_colors 1 2 4 3
             read -rd '' ascii_data <<'EOF'
-${c1}                                ..,
-                    ....,,:;+ccllll
-      ...,,+:;  cllllllllllllllllll
-,cclllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
+${c1}:====================   ${c2}--------------------:
 
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-llllllllllllll  lllllllllllllllllll
-`'ccllllllllll  lllllllllllllllllll
-       `' \\*::  :ccllllllllllllllll
-                       ````''*::cll
-                                 ``
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
+${c3}:====================   ${c4}::::::::::::::::::::.
 EOF
         ;;
 
