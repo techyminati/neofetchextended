@@ -987,6 +987,18 @@ get_distro() {
                 . /etc/armbian-release
                 distro="Armbian $DISTRIBUTION_CODENAME (${VERSION:-})"
 
+            elif [[ -f /etc/rpi-issue ]] || [[ -f /sys/firmware/devicetree/base/model && $(< /sys/firmware/devicetree/base/model) == *"Raspberry Pi"* ]]; then
+                raspbian_version=""
+                if [[ -f /etc/os-release ]]; then
+                    . /etc/os-release
+                    raspbian_version="${VERSION_ID:-}"
+                fi
+                case $distro_shorthand in
+                    on|tiny) distro="Raspbian" ;;
+                    *) distro="Raspbian ${raspbian_version}" ;;
+                esac
+                distro=$(trim "$distro")
+
             elif [[ -f /etc/siduction-version ]]; then
                 case $distro_shorthand in
                     on|tiny) distro=Siduction ;;
