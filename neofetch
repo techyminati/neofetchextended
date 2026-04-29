@@ -3,12 +3,18 @@
 # shellcheck source=/dev/null
 # shellcheck disable=2009
 #
-# Neofetch: A command-line system information tool written in bash 3.2+.
-# https://github.com/dylanaraps/neofetch
+# Neofetch Extended: A command-line system information tool written in bash 3.2+.
+# https://github.com/techyminati/neofetch
+#
+# This is an actively maintained fork of the original neofetch by Dylan Araps.
+# Original project: https://github.com/dylanaraps/neofetch (discontinued)
+#
+# Maintained by: Aryan Sinha (@techyminati)
 #
 # The MIT License (MIT)
 #
 # Copyright (c) 2015-2021 Dylan Araps
+# Copyright (c) 2024-2026 Aryan Sinha
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +34,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-version=7.1.0
+version=7.2.0-extended
 
 # Fallback to a value of '5' for shells which support bash
 # but do not set the 'BASH_' shell variables (osh).

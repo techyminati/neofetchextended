@@ -1,11 +1,36 @@
 <h3 align="center"><img src="https://i.imgur.com/ZQI2EYz.png" alt="logo" height="100px"></h3>
+<h1 align="center">Neofetch Extended</h1>
 <p align="center">A command-line system information tool written in bash 3.2+</p>
 
 <p align="center">
 <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-<a href="https://github.com/dylanaraps/neofetch/releases"><img src="https://img.shields.io/github/release/dylanaraps/neofetch.svg"></a>
+<a href="https://github.com/techyminati/neofetch/releases"><img src="https://img.shields.io/github/release/techyminati/neofetch.svg"></a>
 <a href="https://repology.org/metapackage/neofetch"><img src="https://repology.org/badge/tiny-repos/neofetch.svg" alt="Packaging status"></a>
 </p>
+
+## About This Fork
+
+**Neofetch Extended** is an actively maintained fork of the original neofetch by Dylan Araps.
+
+**Maintained by:** Aryan Sinha ([@techyminati](https://github.com/techyminati))
+
+### Why This Fork?
+
+The original neofetch project has been discontinued and archived, and is being removed from package repositories (apt, homebrew, etc.). This fork aims to:
+
+- Keep neofetch alive and maintained
+- Add support for newer operating systems and versions
+- Fix bugs and improve compatibility
+- Accept community contributions
+
+### What's New?
+
+- **Updated OS Detection**: Support for newer macOS versions (Ventura, Sonoma, Sequoia, Tahoe)
+- **Windows 11 Support**: Proper detection and design language naming
+- **Modern Distro Support**: Better compatibility with latest Linux distributions
+- **Bug Fixes**: Various improvements and fixes from the community
+
+---
 
 <img src="https://i.imgur.com/GFmC5Ad.png" alt="neofetch" align="right" height="240px">
 

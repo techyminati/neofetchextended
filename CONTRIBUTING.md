@@ -1,5 +1,13 @@
 # How to Contribute
 
+## About Neofetch Extended
+
+This is **Neofetch Extended**, an actively maintained fork of the original neofetch by Dylan Araps. The original project has been discontinued and archived, and is being removed from package repositories.
+
+**Maintained by:** Aryan Sinha ([@techyminati](https://github.com/techyminati))
+
+We welcome contributions from the community! Whether it's bug fixes, new OS support, or improvements to existing features, your help is appreciated.
+
 <!-- vim-markdown-toc GFM -->
 
 * [Coding Conventions](#coding-conventions)
