@@ -4971,7 +4971,7 @@ cache() {
 get_cache_dir() {
     case $os in
         "Mac OS X"|"macOS") cache_dir="/Library/Caches" ;;
-        *)          cache_dir="/tmp" ;;
+        *)          cache_dir="${TMPDIR:-/tmp}" ;;
     esac
 }
 
@@ -5526,7 +5526,7 @@ get_args() {
             "--clean")
                 [[ -d "$thumbnail_dir" ]] && rm -rf "$thumbnail_dir"
                 rm -rf "/Library/Caches/neofetch/"
-                rm -rf "/tmp/neofetch/"
+                rm -rf "${TMPDIR:-/tmp}/neofetch/"
                 exit
             ;;
 
@@ -10142,8 +10142,6 @@ ${c1}  `.::///+:/-.        --///+//-:``
    .:::::::  -::::::::. ::::::::
     `-:::::`   ..--.`   ::::::.
       `...`  `...--..`  `...`
-            .::::::::::
-             `.-::::-`
 EOF
         ;;
 
