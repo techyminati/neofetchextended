@@ -79,9 +79,9 @@ print_info() {
     info "CPU" cpu
     info "GPU" gpu
     info "Memory" memory
+    info "Disk" disk
 
     # info "GPU Driver" gpu_driver  # Linux/macOS only
-    # info "Disk" disk
     # info "Battery" battery
     # info "Font" font
     # info "Song" song
@@ -2602,6 +2602,32 @@ get_gpu() {
                                   }
                               }}')"
 
+            # Raspberry Pi GPU detection
+            if [[ "$gpu_cmd" == "" ]]; then
+                # Check if running on Raspberry Pi
+                if [[ -f /proc/device-tree/model ]] && grep -qi "raspberry pi" /proc/device-tree/model; then
+                    # Detect Raspberry Pi GPU based on model
+                    rpi_model="$(< /proc/device-tree/model)"
+                    case $rpi_model in
+                        *[Rr]aspberry\ [Pp]i\ 5* | *[Rr]aspberry\ [Pp]i\ 500*)
+                            gpu_cmd="Broadcom VideoCore VII"
+                        ;;
+                        *[Rr]aspberry\ [Pp]i\ 4* | *[Rr]aspberry\ [Pp]i\ 400*)
+                            gpu_cmd="Broadcom VideoCore VI"
+                        ;;
+                        *[Rr]aspberry\ [Pp]i\ 3* | *[Rr]aspberry\ [Pp]i\ [Zz]ero\ 2*)
+                            gpu_cmd="Broadcom VideoCore IV"
+                        ;;
+                        *[Rr]aspberry\ [Pp]i\ 2* | *[Rr]aspberry\ [Pp]i\ [Zz]ero*)
+                            gpu_cmd="Broadcom VideoCore IV"
+                        ;;
+                        *[Rr]aspberry\ [Pp]i*)
+                            gpu_cmd="Broadcom VideoCore IV"
+                        ;;
+                    esac
+                fi
+            fi
+
             if [[ "$gpu_cmd" == "" ]]; then
                 gpu_cmd="$(glxinfo -B | grep -F 'OpenGL renderer string')"
                 gpu_cmd="${gpu_cmd/OpenGL renderer string: }"
@@ -4041,10 +4067,36 @@ get_gpu_driver() {
         ;;
 
         "Mac OS X"|"macOS")
+            # Check for NVIDIA Web Driver
             if [[ "$(kextstat | grep "GeForceWeb")" != "" ]]; then
                 gpu_driver="NVIDIA Web Driver"
             else
-                gpu_driver="macOS Default Graphics Driver"
+                # Get Metal support and determine driver
+                metal_version="$(system_profiler SPDisplaysDataType | awk -F': ' '/Metal Support/ {print $2; exit}')"
+                gpu_vendor="$(system_profiler SPDisplaysDataType | awk -F': ' '/Chipset Model/ {print $2; exit}')"
+
+                if [[ "$metal_version" ]]; then
+                    # Apple Silicon or Intel with Metal support
+                    case $gpu_vendor in
+                        *"Apple"*)
+                            gpu_driver="Apple GPU ($metal_version)"
+                        ;;
+                        *"AMD"* | *"Radeon"*)
+                            gpu_driver="AMD ($metal_version)"
+                        ;;
+                        *"Intel"*)
+                            gpu_driver="Intel ($metal_version)"
+                        ;;
+                        *"NVIDIA"*)
+                            gpu_driver="NVIDIA ($metal_version)"
+                        ;;
+                        *)
+                            gpu_driver="$metal_version"
+                        ;;
+                    esac
+                else
+                    gpu_driver="macOS Default Graphics Driver"
+                fi
             fi
         ;;
     esac
