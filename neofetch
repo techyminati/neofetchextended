@@ -1179,6 +1179,20 @@ get_distro() {
                 10.16*) codename="macOS Big Sur" ;;
                 11.*)  codename="macOS Big Sur" ;;
                 12.*)  codename="macOS Monterey" ;;
+                13.*)  codename="macOS Ventura" ;;
+                14.*)  codename="macOS Sonoma" ;;
+                15.*)  codename="macOS Sequoia" ;;
+                16.*)  codename="macOS" ;;
+                17.*)  codename="macOS" ;;
+                18.*)  codename="macOS" ;;
+                19.*)  codename="macOS" ;;
+                20.*)  codename="macOS" ;;
+                21.*)  codename="macOS" ;;
+                22.*)  codename="macOS" ;;
+                23.*)  codename="macOS" ;;
+                24.*)  codename="macOS" ;;
+                25.*)  codename="macOS" ;;
+                26.*)  codename="macOS Tahoe" ;;
                 *)      codename=macOS ;;
             esac
 
@@ -1191,7 +1205,7 @@ get_distro() {
                     case $osx_version in
                         10.[4-7]*)            distro=${distro/${codename}/Mac OS X} ;;
                         10.[8-9]*|10.1[0-1]*) distro=${distro/${codename}/OS X} ;;
-                        10.1[2-6]*|11.0*)     distro=${distro/${codename}/macOS} ;;
+                        *)                    distro=${distro/${codename}/macOS} ;;
                     esac
                     distro=${distro/ ${osx_build}}
                 ;;
@@ -1836,8 +1850,12 @@ get_de() {
 
         Windows)
             case $distro in
+                *"Windows 11"*)
+                    de="Fluent Design (Windows 11)"
+                ;;
+
                 *"Windows 10"*)
-                    de=Fluent
+                    de="Fluent Design"
                 ;;
 
                 *"Windows 8"*)
