@@ -1,0 +1,28 @@
+Source: neofetch
+Section: utils
+Priority: optional
+Maintainer: Aryan Sinha <techyminati@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://github.com/techyminati/neofetch
+Vcs-Browser: https://github.com/techyminati/neofetch
+Vcs-Git: https://github.com/techyminati/neofetch.git
+Rules-Requires-Root: no
+
+Package: neofetch
+Architecture: all
+Depends: ${misc:Depends}, bash (>= 3.2)
+Recommends: w3m-img, imagemagick
+Suggests: xprop, wmctrl, glxinfo
+Description: Shows Linux System Information with Distribution Logo
+ Neofetch is a command-line system information tool written in bash 3.2+.
+ Neofetch displays information about your operating system, software and
+ hardware in an aesthetic and visually pleasing way.
+ .
+ The overall purpose of Neofetch is to be used in screenshots of your system.
+ Neofetch shows the information other people want to see. There are other
+ tools available for proper system statistic/diagnostics.
+ .
+ The information by default is displayed alongside your operating system's
+ logo. You can further configure Neofetch to instead use an image, a custom
+ ASCII file, your wallpaper or nothing at all.
