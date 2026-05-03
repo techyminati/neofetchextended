@@ -258,6 +258,65 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  publish-homebrew:
+    name: Update Homebrew Formula
+    needs: build-tarball
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: neofetch-tarball
+
+      - name: Update Homebrew formula
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          TARBALL="neofetch-${VERSION}.tar.gz"
+          SHA256=$(cat ${TARBALL}.sha256 | cut -d' ' -f1)
+
+          cat > Formula/neofetch.rb <<EOF
+          class Neofetch < Formula
+            desc "Command-line system information tool written in bash 3.2+"
+            homepage "https://github.com/techyminati/neofetch"
+            url "https://github.com/techyminati/neofetch/archive/refs/tags/v${VERSION}.tar.gz"
+            sha256 "${SHA256}"
+            license "MIT"
+            version "${VERSION}"
+
+            def install
+              bin.install "neofetch"
+              man1.install "neofetch.1"
+            end
+
+            test do
+              system "#{bin}/neofetch", "--version"
+              assert_match "Neofetch", shell_output("#{bin}/neofetch --version")
+            end
+          end
+          EOF
+
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add Formula/neofetch.rb
+          git diff --staged --quiet || git commit -m "chore: update Homebrew formula to ${VERSION} [skip ci]"
+          git push || echo "No changes to push"
+
   test-packages:
     name: Test Packages
     needs: create-release
